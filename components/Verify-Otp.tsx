@@ -37,9 +37,7 @@ export default function OtpVerification({
   }, [phone, router]);
 
   useEffect(() => {
-    if (timer === 0) {
-      return;
-    }
+    if (timer === 0) return;
     const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
     return () => clearInterval(interval);
   }, [timer]);
@@ -100,6 +98,11 @@ export default function OtpVerification({
       return;
     }
 
+    if (timer === 0) {
+      setError("Code expired. Please resend a new code.");
+      return;
+    }
+
     setLoading(true);
     toast.loading("Verifying code...", { id: "verify-toast" });
 
@@ -110,12 +113,13 @@ export default function OtpVerification({
         code: otp,
         usage,
       });
+
       toast.success("Code verified! Redirecting...", { id: "verify-toast" });
-      dispatch(setPhoneAndCode({ phone: phone, code: otp }));
+      dispatch(setPhoneAndCode({ phone, code: otp }));
 
       if (onSuccess) onSuccess(otp);
       router.push(redirectUrl);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const message = err.response?.data?.message || "Invalid code, try again.";
       setError(message);
@@ -136,7 +140,7 @@ export default function OtpVerification({
       setActiveIndex(0);
       setTimer(60);
       toast.success("Code resent!", { id: "send-code-toast" });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const message = err.response?.data?.message || "Failed to resend code.";
       setError(message);
@@ -146,7 +150,7 @@ export default function OtpVerification({
     }
   };
 
-  const isVerifyButtonDisabled = loading || code.join("").length < 4;
+  const isVerifyButtonDisabled = loading || code.join("").length < 4 || timer === 0;
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex-col items-center justify-center px-4 py-10">
@@ -179,6 +183,12 @@ export default function OtpVerification({
         </div>
 
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+        {timer === 0 && (
+          <p className="text-yellow-400 text-sm text-center">
+            Code expired. Please resend a new code.
+          </p>
+        )}
 
         <button
           type="submit"
