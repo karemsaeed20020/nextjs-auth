@@ -20,7 +20,7 @@ export default function OtpVerification({
   postUrl,
   resendUrl,
   redirectUrl,
-  usage = "general",
+  usage = "verify",
   onSuccess,
 }: OtpVerificationProps) {
   const router = useRouter();
