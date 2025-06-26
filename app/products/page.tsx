@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Slider from '@/components/Slider';
 import ProductList from '@/components/ProductList';
@@ -24,25 +24,39 @@ const Products = () => {
     subCategoryIds: [], 
   });
 
-  
   const handleFilterChange = useCallback((newFilters: Filters) => {
     setFilters(newFilters);
-  }, []); 
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Slider />
 
       {/* Mobile Filters Button */}
-      <div className="lg:hidden px-4 mt-4 flex justify-end">
-        <button
-          onClick={() => setIsSidebarOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        >
-          <SlidersHorizontal className="h-4 w-4" />
-          Filters
-        </button>
-      </div>
+      {!isSidebarOpen && (
+        <div className="lg:hidden px-4 mt-4 flex justify-end">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            Filters
+          </button>
+        </div>
+      )}
 
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
@@ -52,7 +66,7 @@ const Products = () => {
               <h2 className="text-lg font-semibold">Filters</h2>
               <button
                 onClick={() => setIsSidebarOpen(false)}
-                className="text-gray-500 hover:text-red-500"
+                className="text-black hover:text-red-500"
               >
                 ✕
               </button>
@@ -71,7 +85,7 @@ const Products = () => {
 
         <main className="flex-1">
           <h2 className="text-xl text-black font-semibold mb-4">Best Selling Products</h2>
-          <ProductList filters={filters} /> 
+          <ProductList filters={filters} />
         </main>
       </div>
     </div>
