@@ -59,7 +59,7 @@ const CategoryFilter = ({ onSelect }: Props) => {
       <input
         type="text"
         placeholder="Search..."
-        className="w-full px-3 py-2 text-sm border outline-none text-black rounded-md"
+        className="w-full px-3 py-2 text-sm border outline-none text-black rounded-md placeholder-black/50"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
@@ -71,7 +71,7 @@ const CategoryFilter = ({ onSelect }: Props) => {
           <p className="text-gray-400 italic">No categories found</p>
         ) : (
           visibleCategories.map((cat) => (
-            <label key={cat.id} className="flex items-center space-x-2">
+            <label key={cat.id} className="flex items-center gap-1">
               <input
                 type="checkbox"
                 checked={selected.includes(cat.id)}
