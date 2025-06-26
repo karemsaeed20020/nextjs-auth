@@ -23,7 +23,7 @@ export default function HomePage() {
     <main className="">
       <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
         <Link href="/" className="text-2xl font-bold text-indigo-600">
-          Kareem
+          Outlet
         </Link>
 
         <div className="hidden sm:flex items-center gap-8 relative">
@@ -38,6 +38,12 @@ export default function HomePage() {
             className="text-black hover:text-indigo-600 transition-colors"
           >
             Contact
+          </Link>
+          <Link
+            href="/products"
+            className="text-black hover:text-indigo-600 transition-colors"
+          >
+            Products
           </Link>
 
           {isLoggedIn ? (
