@@ -61,7 +61,7 @@ const BrandFilter = ({ onFilterChange }: BrandFilterProps) => {
       <input
         type="text"
         placeholder="Search brands..."
-        className="w-full px-3 py-2 text-sm border outline-none text-black rounded-md focus:ring-2 focus:ring-blue-500"
+        className="w-full px-3 py-2 text-sm border outline-none text-black rounded-md focus:ring-2 focus:ring-blue-500 placeholder-black/50"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
@@ -71,7 +71,7 @@ const BrandFilter = ({ onFilterChange }: BrandFilterProps) => {
           <p className="text-gray-400 italic">No brands found</p>
         ) : (
           displayBrands.map((brand) => (
-            <label key={brand.id} className="flex items-center space-x-2 cursor-pointer">
+            <label key={brand.id} className="flex items-center gap-1 cursor-pointer">
               <input
                 type="checkbox"
                 checked={selectedBrands.includes(brand.id)}
