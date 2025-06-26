@@ -65,21 +65,22 @@ const Sidebar = ({ onFilterChange }: SidebarProps) => {
             </button>
           ))}
         </div>
-        {selectedRating !== null && (
-          <button
-            onClick={() => setSelectedRating(null)}
-            className="text-blue-500 text-sm mt-2 hover:underline"
-          >
-            Clear Rating Filter
-          </button>
-        )}
+       {selectedRating !== null && (
+  <button
+    onClick={() => setSelectedRating(null)}
+    className="text-black/50 text-sm mt-4 hover:underline hover:text-black transition"
+  >
+    Clear Rating Filter
+  </button>
+)}
+
       </div>
 
       {/* Price */}
       <div>
         <h4 className="text-lg font-semibold text-gray-800 mb-3">💲 Prices</h4>
         <div className="space-y-2 text-sm text-gray-700">
-          <label className="flex items-center space-x-2">
+          <label className="flex items-center gap-1">
             <input
               type="radio"
               name="price"
@@ -89,7 +90,7 @@ const Sidebar = ({ onFilterChange }: SidebarProps) => {
             />
             <span>Low to High</span>
           </label>
-          <label className="flex items-center space-x-2">
+          <label className="flex items-center gap-1">
             <input
               type="radio"
               name="price"
@@ -99,7 +100,7 @@ const Sidebar = ({ onFilterChange }: SidebarProps) => {
             />
             <span>High to Low</span>
           </label>
-          <label className="flex items-center space-x-2">
+          <label className="flex items-center gap-1">
             <input
               type="radio"
               name="price"
