@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSelector } from 'react-redux';
@@ -6,15 +7,19 @@ import { RootState } from '@/redux/store';
 import { ShoppingCart } from 'lucide-react';
 import axiosInstance from '@/lib/axios';
 import { Product, ProductListProps } from '@/types';
+import { Pagination } from 'antd';
 
 const PRODUCTS_PER_PAGE = 10;
 
 const ProductList = ({ filters }: ProductListProps) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const [products, setProducts] = useState<Product[]>([]);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png';
 
   useEffect(() => {
     setPage(1);
@@ -59,6 +64,7 @@ const ProductList = ({ filters }: ProductListProps) => {
 
         setProducts(res.data.data || []);
         setTotal(res.data.count || 0);
+        setImageErrors({});
       } catch (error) {
         console.error('Error fetching products:', error);
         setProducts([]);
@@ -71,15 +77,20 @@ const ProductList = ({ filters }: ProductListProps) => {
     fetchProducts();
   }, [token, page, filters]);
 
-  const totalPages = Math.ceil(total / PRODUCTS_PER_PAGE);
+  const handleImageError = (id: number) => {
+    setImageErrors((prev) => ({ ...prev, [id]: true }));
+  };
 
   return (
     <div className="px-4">
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {Array.from({ length: PRODUCTS_PER_PAGE }).map((_, i) => (
-            <div key={i} className="flex flex-col border rounded-xl shadow-sm bg-white animate-pulse h-full overflow-hidden">
-              <div className="w-full aspect-[4/3] bg-gray-200" />
+            <div
+              key={i}
+              className="flex flex-col rounded-xl shadow bg-white animate-pulse h-full overflow-hidden"
+            >
+              <div className="w-full aspect-[4/3] bg-gray-200 rounded-t-xl" />
               <div className="flex-1 p-4 space-y-3">
                 <div className="h-4 bg-gray-200 rounded w-3/4" />
                 <div className="h-4 bg-gray-200 rounded w-1/2" />
@@ -93,72 +104,57 @@ const ProductList = ({ filters }: ProductListProps) => {
       ) : (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="flex flex-col border rounded-xl shadow-sm bg-white hover:shadow-md transition overflow-hidden"
-              >
-                <div className="relative w-full aspect-[4/3] bg-gray-100">
-                  <Image
-                    src={
-                      product.image?.startsWith('http')
-                        ? product.image
-                        : 'https://via.placeholder.com/300x200?text=No+Image'
-                    }
-                    alt={product.name || product.name_en || 'Product'}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+            {products.map((product) => {
+              const imageUrl = imageErrors[product.id]
+                ? fallbackImage
+                : product.image || fallbackImage;
 
-                <div className="flex-1 p-4 flex flex-col justify-between">
-                  <div>
-                    <p className="font-semibold text-sm text-gray-800 line-clamp-2 mb-1">
-                      {product.name || product.name_en || 'Unnamed'}
-                    </p>
-                    <p className="text-blue-600 font-bold text-sm">
-                      {product.price} <span className="text-xs">SAR</span>
-                    </p>
+              return (
+                <div
+                  key={product.id}
+                  className="flex flex-col rounded-xl shadow bg-white hover:shadow-md transition overflow-hidden"
+                >
+                  <div className="p-3 bg-gray-100 rounded-t-xl">
+                    <Image
+                      src={imageUrl}
+                      alt={product.name || product.name_en || 'Product'}
+                      width={300}
+                      height={200}
+                      unoptimized
+                      className="object-cover w-full h-[200px] rounded"
+                      onError={() => handleImageError(product.id)}
+                    />
                   </div>
 
-                  <button className="mt-4 w-full bg-blue-600 text-white py-2 text-sm rounded hover:bg-blue-700 transition flex items-center justify-center gap-2">
-                    <ShoppingCart size={16} />
-                    Add to Cart
-                  </button>
+                  <div className="flex-1 p-4 flex flex-col justify-between">
+                    <div>
+                      <p className="font-semibold text-sm text-gray-800 line-clamp-2 mb-1">
+                        {product.name || product.name_en || 'Unnamed'}
+                      </p>
+                      <p className="text-blue-600 font-bold text-sm">
+                        {product.price} <span className="text-xs">SAR</span>
+                      </p>
+                    </div>
+
+                    <button className="mt-4 w-full bg-blue-600 text-white py-2 text-sm rounded hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                      <ShoppingCart size={16} />
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          {totalPages > 1 && (
-            <div className="mt-8 flex justify-center gap-2 flex-wrap">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-3 py-1 border rounded disabled:opacity-50 text-black"
-              >
-                Prev
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setPage(i + 1)}
-                  className={`px-3 py-1 border rounded text-black  ${
-                    page === i + 1 ? 'bg-blue-600 text-white' : ''
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="px-3 py-1 border rounded disabled:opacity-50 text-black"
-              >
-                Next
-              </button>
-            </div>
-          )}
+          <div className="mt-10 flex justify-center items-center">
+            <Pagination
+              current={page}
+              total={total}
+              pageSize={PRODUCTS_PER_PAGE}
+              onChange={(newPage) => setPage(newPage)}
+              showSizeChanger={false}
+            />
+          </div>
         </>
       )}
     </div>
