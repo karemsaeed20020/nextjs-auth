@@ -13,6 +13,7 @@ import {
 import storage from 'redux-persist/lib/storage';
 
 import authReducer from './auth/authSlice';
+import productReducer from './product/productSlice'
 
 const persistConfig = {
   key: 'root',
@@ -21,6 +22,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  product: productReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
