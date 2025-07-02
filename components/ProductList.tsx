@@ -8,6 +8,7 @@ import { ShoppingCart } from 'lucide-react';
 import axiosInstance from '@/lib/axios';
 import { Product, ProductListProps } from '@/types';
 import { Pagination } from 'antd';
+import { useRouter } from 'next/navigation';
 
 const PRODUCTS_PER_PAGE = 10;
 
@@ -18,6 +19,7 @@ const ProductList = ({ filters }: ProductListProps) => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png';
 
@@ -112,6 +114,7 @@ const ProductList = ({ filters }: ProductListProps) => {
               return (
                 <div
                   key={product.id}
+                   onClick={() => router.push(`/products/${product.id}`)}
                   className="flex flex-col rounded-xl shadow bg-white hover:shadow-md transition overflow-hidden"
                 >
                   <div className="p-3 bg-gray-100 rounded-t-xl">
