@@ -3,6 +3,8 @@
 import { Star } from 'lucide-react';
 import Barcode from 'react-barcode';
 import ProductActions from './ProductActions';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 interface ProductInfoProps {
   product: {
@@ -10,8 +12,6 @@ interface ProductInfoProps {
     name: string;
     price: string;
     barcode: string;
-    rate_avg: string;
-    rate_count: number;
     brand_name: string;
     description?: string;
     category?: string;
@@ -20,41 +20,41 @@ interface ProductInfoProps {
 }
 
 const ProductInfo = ({ product }: ProductInfoProps) => {
-  const ratingNumber = parseFloat(product.rate_avg || '0');
+  const { rate_avg, rate_count } = useSelector((state: RootState) => state.product);
+  const ratingNumber = parseFloat(rate_avg || '0');
   const isInStock = product.stock ? product.stock > 0 : true;
 
   return (
     <div className="flex flex-col">
       <div className="mb-4">
-        <h1 className="text-2xl sm:text-3xl lg:text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl sm:text-3xl lg:text-2xl font-bold text-teal-400 mb-2">
           {product.name}
         </h1>
-        <p className="text-sm text-gray-600">
-          Brand: <span className="font-medium text-gray-800">{product.brand_name}</span>
-        </p>
+        
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-start gap-8 mb-6">
         <div className="flex items-center gap-1">
+          {/* Star Rating */}
           <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
+            {[1, 2, 3, 4, 5].map((star) => (
               <Star
-                key={i}
+                key={star}
                 size={18}
-                className={`${
-                  i < Math.round(ratingNumber)
+                className={
+                  star <= Math.round(ratingNumber)
                     ? 'text-yellow-400 fill-yellow-400'
                     : 'text-gray-300'
-                }`}
+                }
               />
             ))}
           </div>
           <span className="ml-2 text-sm text-gray-700">
-            {ratingNumber.toFixed(1)} ({product.rate_count} reviews)
+            {ratingNumber.toFixed(1)} ({rate_count} {rate_count === 1 ? 'review' : 'reviews'})
           </span>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-md px-2 py-1 shadow-sm">
+        <div className="px-2 py-1">
           <Barcode 
             value={product.barcode} 
             height={25} 
@@ -65,9 +65,8 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         </div>
       </div>
 
-      {/* Price */}
       <div className="mb-6">
-        <div className="text-3xl font-extrabold text-blue-600">
+        <div className="text-3xl text-gray-700 font-normal">
           {parseFloat(product.price).toFixed(2)} <span className="text-base font-medium text-gray-600">SAR</span>
         </div>
         {product.stock && (
@@ -87,6 +86,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
       <ProductActions 
         isInStock={isInStock} 
         productName={product.name}
+        price={product.price}
       />
     </div>
   );
