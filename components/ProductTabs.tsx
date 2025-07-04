@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -14,6 +15,7 @@ interface Props {
   averageRating: number;
   ratingCount: number;
   rateDetails: RateDetail[];
+  reviews: any[];
   specifications: string;
   subCategoryId: number;
   currentId: number;
@@ -23,6 +25,7 @@ const ProductTabs = ({
   averageRating,
   ratingCount,
   rateDetails,
+  reviews,
   specifications,
   subCategoryId,
   currentId,
@@ -36,15 +39,15 @@ const ProductTabs = ({
         <button
           onClick={() => setActiveTab('reviews')}
           className={`px-6 py-3 font-medium ${
-            activeTab === 'reviews' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-600'
+            activeTab === 'reviews' ? 'border-b-2 border-teal-600 text-teal-600' : 'text-gray-600'
           }`}
         >
-          Reviews ({ratingCount})
+          Reviews
         </button>
         <button
           onClick={() => setActiveTab('specs')}
           className={`px-6 py-3 font-medium ${
-            activeTab === 'specs' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-600'
+            activeTab === 'specs' ? 'border-b-2 border-teal-600 text-teal-600' : 'text-gray-600'
           }`}
         >
           Specifications
@@ -53,15 +56,16 @@ const ProductTabs = ({
 
       <div className="mt-8">
         {activeTab === 'reviews' ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1 w-full h-[400px] bg-white p-6 rounded-xl shadow border border-gray-100">
-              <div className="text-center mb-6">
-                <span className="text-5xl font-extrabold text-indigo-600">{averageRating.toFixed(1)}</span>
-                <div className="flex justify-center gap-1 mt-2">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1 h-[300px] bg-white p-6 rounded-xl shadow border border-gray-100">
+              <p className='text-xl font-semibold text-black/70 mb-4'>General Rating</p>
+              <div className="flex items-center gap-2 mb-6">
+                <span className="text-xl font-extrabold text-black">{averageRating.toFixed(1)}</span>
+                <div className="flex justify-center gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      size={22}
+                      size={15}
                       className={`${
                         i < Math.round(averageRating)
                           ? 'fill-amber-400 text-amber-400'
@@ -70,12 +74,11 @@ const ProductTabs = ({
                     />
                   ))}
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
-                  Based on <span className="font-semibold">{ratingCount}</span> review{ratingCount !== 1 && 's'}
+                <p className="text-sm text-gray-500">
+                  Based on <span className="font-normal">{ratingCount}</span> review{ratingCount !== 1 && 's'}
                 </p>
               </div>
 
-              {/* Rating Breakdown */}
               <div className="space-y-3">
                 {[5, 4, 3, 2, 1].map((star) => {
                   const detail = rateDetails.find((r) => r.value === star);
@@ -103,26 +106,30 @@ const ProductTabs = ({
                 })}
               </div>
             </div>
-
-            <div className="lg:col-span-2">
-              <ReviewList />
+            
+            <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow border border-gray-100">
+              <h3 className="text-xl font-semibold text-black/70 mb-6">Customer Reviews</h3>
+              <ReviewList reviews={reviews} />
             </div>
           </div>
         ) : (
-          <div className="space-y-8">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Specifications</h3>
-              <div className="prose prose-sm text-gray-700 max-w-none">
-                {specifications ? (
-                  <div dangerouslySetInnerHTML={{ __html: specifications }} />
-                ) : (
-                  <p className="text-gray-500">No specifications provided.</p>
-                )}
+          <div>
+            <div className="p-6">
+              <div className="flex flex-col md:flex-row md:items-start gap-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 md:mb-0">
+                  Product Specifications:
+                </h3>
+                <div className="prose prose-sm text-gray-700 max-w-full md:flex-grow">
+                  {specifications ? (
+                    <div dangerouslySetInnerHTML={{ __html: specifications }} className='mb-0 mt-0 text-[18px]' />
+                  ) : (
+                    <p className="text-gray-500">No specifications provided.</p>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Similar Products</h3>
+            <div className="p-6">
               <SimilarProducts subCategoryId={subCategoryId} currentId={currentId} />
             </div>
           </div>
