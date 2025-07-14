@@ -1,5 +1,4 @@
 'use client';
-
 import { Star } from 'lucide-react';
 import Barcode from 'react-barcode';
 import ProductActions from './ProductActions';
