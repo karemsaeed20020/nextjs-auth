@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -9,7 +10,11 @@ import Input from "@/components/inputs/Input";
 import axiosInstance from "@/lib/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { loginStart, loginSuccess, loginFailure } from "@/redux/auth/authSlice";
+import {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+} from "@/redux/auth/authSlice";
 import { LoginFormType, loginSchema } from "@/schema/validations";
 import { MdLock, MdPhone } from "react-icons/md";
 
@@ -32,11 +37,17 @@ export default function LoginPage() {
     try {
       dispatch(loginStart());
       const res = await axiosInstance.post("api/auth/login", data);
-      const userToken = res.data.token;
-      dispatch(loginSuccess(userToken));
+
+      const token = res.data.token;
+      const user = res.data.data;
+
+      dispatch(loginSuccess({ token, user }));
+
       toast.success("Logged in successfully");
+
+      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
       router.push("/");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const message = err?.response?.data?.message || "Login failed";
       dispatch(loginFailure(message));
@@ -46,9 +57,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (token) {
-      axiosInstance.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
   }, [token]);
 
@@ -108,7 +117,7 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-300">
-            Dont have an account?{" "}
+            Don’t have an account?{" "}
             <Link
               href="/sign-up"
               className="font-medium text-[#E7C9A5] hover:text-[#d6b58f] hover:underline transition"
