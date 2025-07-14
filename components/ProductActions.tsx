@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -23,7 +22,7 @@ const ProductActions = ({ isInStock, productName }: ProductActionsProps) => {
         <div className="flex items-center gap-5 bg-slate-300 rounded-full overflow-hidden">
           <button
             onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))}
-            className="px-4 py-2 bg-slate-700 text-white hover:bg-slate-500 transition disabled:opacity-50"
+            className="px-4 py-2 bg-slate-600 text-white hover:bg-slate-500 transition disabled:opacity-50"
             disabled={quantity <= 1}
             aria-label="Decrease quantity"
           >
@@ -44,7 +43,7 @@ const ProductActions = ({ isInStock, productName }: ProductActionsProps) => {
         <button
           onClick={handleAddToCart}
           disabled={!isInStock}
-          className={`px-6 py-3 rounded-md text-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+          className={`px-8 py-2 cursor-pointer rounded-full text-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
             isInStock 
               ? 'bg-teal-500 hover:bg-teal-600 text-white'
               : 'bg-gray-300 text-gray-600 cursor-not-allowed'
