@@ -1,12 +1,11 @@
-
 'use client';
-
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Scrollbar } from 'swiper/modules';
+import { Scrollbar, Autoplay } from 'swiper/modules'; 
 
 import 'swiper/css';
 import 'swiper/css/scrollbar';
+import 'swiper/css/autoplay'; 
 
 interface ProductGalleryProps {
   images: string[];
@@ -18,12 +17,17 @@ const ProductGallery = ({ images, productName }: ProductGalleryProps) => {
     <div className="relative w-full max-w-md mx-auto">
       <div className="relative bg-white rounded-xl overflow-hidden">
         <Swiper
-          modules={[Scrollbar]}
+          modules={[Scrollbar, Autoplay]}
           scrollbar={{
             draggable: true,
             hide: false,
             snapOnRelease: true,
             dragSize: 'auto',
+          }}
+          autoplay={{
+            delay: 3000, 
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true, 
           }}
           spaceBetween={10}
           slidesPerView={1}
