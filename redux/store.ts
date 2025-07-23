@@ -15,20 +15,18 @@ import authReducer from './auth/authSlice';
 import favoritesReducer from './favorites/favoritesSlice';
 import cartReducer from './cart/cartSlice';
 import notificationsReducer from './notifications/notificationsSlice';
-import addressesReducer from './addresses/addressesSlice'
 const rootReducer = combineReducers({
   product: productReducer,
   auth: authReducer,
   favorites: favoritesReducer,
   cart: cartReducer,
   notifications: notificationsReducer,
-  addresses: addressesReducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['product', 'auth', 'favorites', 'cart', 'notifications', 'addresses'],
+  whitelist: ['product', 'auth', 'favorites', 'cart', 'notifications'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
