@@ -1,3 +1,4 @@
+
 "use client";
 import { useState } from "react";
 import { BsTelephone } from "react-icons/bs";
@@ -7,16 +8,10 @@ import { toast, Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { z, ZodError } from "zod";
 import { RootState } from "@/redux/store";
-
 import Input from "@/components/inputs/Input";
 import axiosInstance from "@/lib/axios";
-import {
-  registerStart,
-  registerSuccess,
-  registerFailure,
-} from "@/redux/auth/authSlice";
+import { registerStart, registerSuccess, registerFailure } from "@/redux/auth/authSlice";
 import OtpVerification from "@/components/Verify-Otp";
-
 
 const formSchema = z.object({
   newPhone: z.string().min(1, "New phone number is required"),
@@ -27,7 +22,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function ChangePhone() {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
+  const { loading, error, user } = useSelector((state: RootState) => state.auth);
 
   const [formData, setFormData] = useState<FormData>({
     newPhone: "",
@@ -56,14 +51,21 @@ export default function ChangePhone() {
         password: formData.password,
       });
 
-      const { token, phone } = data;
       await axiosInstance.post("api/auth/send-code", {
         phone: formData.newPhone,
         usage: "verify",
       });
-      dispatch(registerSuccess({ token, phone }));
-      localStorage.setItem("forgotPasswordPhone", formData.newPhone);
 
+      // Updated to match the expected payload structure
+      dispatch(registerSuccess({ 
+        token: data.token, 
+        user: {
+          ...user!,
+          phone: formData.newPhone
+        }
+      }));
+
+      localStorage.setItem("forgotPasswordPhone", formData.newPhone);
       toast.success("Phone number updated! OTP sent.", { id: toastId });
       setOtpPhone(formData.newPhone);
       setShowVerifyOtp(true);
@@ -101,7 +103,7 @@ export default function ChangePhone() {
   }
 
   return (
-    <main className="bg-gray-500 min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center px-4 py-10 text-white relative">
+    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center px-4 py-10 text-white relative">
       <Toaster position="top-right" />
 
       {loading && (
