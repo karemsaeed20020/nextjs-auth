@@ -35,6 +35,8 @@ export interface Product {
   price?: number | string;
   image?: string;
   rate_avg?: number | string;
+   hasOffer?: boolean;
+  offer_title?: string;
 }
 
 export interface Filters {
@@ -44,8 +46,3 @@ export interface Filters {
   brandIds: number[];
   subCategoryIds: number[];
 }
-
-export interface ProductListProps {
-  filters?: Filters;
-}
-
