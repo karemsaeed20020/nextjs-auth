@@ -27,8 +27,7 @@
     "strictBindCallApply": true,
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
-    "noImplicitAny": false,  // 👈 Allows variables with implicit `any` type
-    "suppressImplicitAnyIndexErrors": true // 👈 Suppress index access errors on `any`
+    "noImplicitAny": false,
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
