@@ -15,4 +15,17 @@ export interface CartData {
   coupon_type: string | null;
   coupon_value: string | null;
   products: CartProduct[];
+
+
+}
+
+// In your types.ts file
+export interface CartItem {
+  id: number;
+  quantity: number;
+  price: number;
+  name: string;
+  image: string;
+  hasOffer?: boolean;
+  offer_title?: string;
 }
