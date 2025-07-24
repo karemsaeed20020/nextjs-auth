@@ -37,6 +37,13 @@ export interface Product {
   rate_avg?: number | string;
    hasOffer?: boolean;
   offer_title?: string;
+  rate_count?: number;
+  rates?: Rate[];
+  rate_details?: {
+    value: number;
+    count: number;
+  }[];
+  is_rated?: number;
 }
 
 export interface Filters {
@@ -45,4 +52,18 @@ export interface Filters {
   categoryIds: number[];
   brandIds: number[];
   subCategoryIds: number[];
+}
+
+export interface ProductListProps {
+  filters?: Filters;
+}
+
+export interface Rate {
+  id: number;
+  value: number;
+  description: string;
+  created_at: string;
+  user_id: number;
+  user_name: string;  
+  user_image: string; 
 }
