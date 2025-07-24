@@ -1,5 +1,5 @@
-'use client';
 
+'use client';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
@@ -19,6 +19,14 @@ import { CartProductItem } from '@/components/cart/CartProductItem';
 import { CartSummary } from '@/components/cart/CartSummary';
 import { CartHeader } from '@/components/cart/CartHeader';
 import { useCartCalculations } from '@/components/cart/hooks/useCartCalculations';
+
+interface Coupon {
+  id: number;
+  code: string;
+  type: 'fixed' | 'percentage';
+  value: number;
+  valid_until: string;
+}
 
 export default function CartPage() {
   const router = useRouter();
@@ -50,6 +58,14 @@ export default function CartPage() {
       const data = res.data.data;
       setCartData(data);
       
+      const coupon: Coupon | null = data.coupon_id ? {
+        id: data.coupon_id,
+        code: data.coupon_code || `COUPON_${data.coupon_id}`,
+        type: data.coupon_type as 'percentage' | 'fixed',
+        value: parseFloat(data.coupon_value || '0'),
+        valid_until: data.coupon_valid_until || new Date().toISOString()
+      } : null;
+
       dispatch(setCart({
         items: data.products.map((product: CartProduct) => ({
           id: product.id,
@@ -59,12 +75,7 @@ export default function CartPage() {
           image: product.image
         })),
         vatRatio: data.vat_ratio || '0',
-        coupon: data.coupon_id ? {
-          id: data.coupon_id,
-          type: data.coupon_type as 'percentage' | 'fixed',
-          value: parseFloat(data.coupon_value || '0'),
-          valid_until: ''
-        } : null
+        coupon: coupon
       }));
     } catch (error) {
       console.error('Error fetching cart:', error);
@@ -197,8 +208,6 @@ export default function CartPage() {
                 onDecrease={handleDecreaseQuantity}
               />
             ))}
-
-            
           </div>
 
           <CartSummary
@@ -206,7 +215,7 @@ export default function CartPage() {
             vat={totals.vat}
             discount={totals.discount}
             total={totals.total}
-            vatRate={totals.vatRate}
+            vatRate={cartData.vat_ratio || '0'}
             hasCoupon={hasCoupon}
             onCheckout={() => router.push('/checkout')}
             onClearCart={handleClearCart}
