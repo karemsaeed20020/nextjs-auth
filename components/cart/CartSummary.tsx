@@ -18,7 +18,7 @@ export function CartSummary({
   vatRate,
   hasCoupon,
   onCheckout,
-  onClearCart,
+  // onClearCart,
 }: CartSummaryProps) {
   return (
     <div className="lg:col-span-1">
