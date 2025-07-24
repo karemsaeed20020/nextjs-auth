@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -110,13 +111,26 @@ const ProductList = ({ filters }: ProductListProps) => {
       formData.append("product_id", productId.toString());
       formData.append("quantity", "1");
 
-      await axiosInstance.post("api/add-to-cart", formData, {
+      const response = await axiosInstance.post("api/add-to-cart", formData, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       });
 
-      dispatch(addToCart(productId));
+      const productToAdd = products.find(p => p.id === productId);
+      if (productToAdd) {
+        dispatch(addToCart({
+          id: productToAdd.id,
+          quantity: 1,
+          price: productToAdd.price,
+          name: productToAdd.name,
+          image: productToAdd.image || fallbackImage,
+          hasOffer: productToAdd.hasOffer,
+          offer_title: productToAdd.offer_title
+        }));
+      }
+      
       toast.success("Added to cart");
-    } catch  {
+    } catch (error) {
+      console.error("Add to cart error:", error);
       toast.error("Failed to add to cart");
     } finally {
       setAddingToCart(null);
@@ -146,7 +160,7 @@ const ProductList = ({ filters }: ProductListProps) => {
             {products.map((product) => {
               const imageUrl = imageErrors[product.id] ? fallbackImage : product.image || fallbackImage;
               const isFavorite = favorites.includes(product.id);
-              const isInCart = cartItems.includes(product.id);
+              const isInCart = cartItems.some(item => item.id === product.id);
               const isLoading = addingToCart === product.id;
 
               return (
@@ -165,6 +179,15 @@ const ProductList = ({ filters }: ProductListProps) => {
                       className="object-cover w-full h-[200px] rounded"
                       onError={() => handleImageError(product.id)}
                     />
+                    
+                    {/* Offer Badge */}
+                    {product.hasOffer && (
+                      <div className="absolute top-2 right-2 bg-green-100 px-2 py-1 rounded-full z-10">
+                        <span className="text-xs font-medium text-green-600">
+                          {product.offer_title}
+                        </span>
+                      </div>
+                    )}
 
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded">
                       <button
