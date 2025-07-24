@@ -110,22 +110,28 @@ const ProductList = ({ filters }: ProductListProps) => {
       const formData = new FormData();
       formData.append("product_id", productId.toString());
       formData.append("quantity", "1");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const response = await axiosInstance.post("api/add-to-cart", formData, {
+
+      await axiosInstance.post("api/add-to-cart", formData, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       });
 
       const productToAdd = products.find(p => p.id === productId);
       if (productToAdd) {
-        dispatch(addToCart({
+        const cartItem = {
           id: productToAdd.id,
           quantity: 1,
-          price: productToAdd.price,
-          name: productToAdd.name,
+          price: typeof productToAdd.price === 'string' 
+            ? parseFloat(productToAdd.price) 
+            : Number(productToAdd.price || 0),
+          name: productToAdd.name || 'Unnamed Product',
           image: productToAdd.image || fallbackImage,
-          hasOffer: productToAdd.hasOffer,
-          offer_title: productToAdd.offer_title
-        }));
+          ...(productToAdd.hasOffer && {
+            hasOffer: productToAdd.hasOffer,
+            offer_title: productToAdd.offer_title || ''
+          })
+        };
+        
+        dispatch(addToCart(cartItem));
       }
       
       toast.success("Added to cart");
@@ -180,8 +186,7 @@ const ProductList = ({ filters }: ProductListProps) => {
                       onError={() => handleImageError(product.id)}
                     />
                     
-                    {/* Offer Badge */}
-                    {product.hasOffer && (
+                    {product.hasOffer && product.offer_title && (
                       <div className="absolute top-2 right-2 bg-green-100 px-2 py-1 rounded-full z-10">
                         <span className="text-xs font-medium text-green-600">
                           {product.offer_title}
