@@ -37,7 +37,7 @@ const ProductTabs = ({
 }: Props) => {
   const [activeTab, setActiveTab] = useState<'reviews' | 'specs'>('reviews');
   const user = useSelector((state: RootState) => state.auth.user);
-  const userReview = reviews.find((r) => r.user_id === user?.id);
+ //  const userReview = reviews.find((r) => r.user_id === user?.id);
   const maxRating = Math.max(...rateDetails.map((r) => r.count || 0));
 
   return (
