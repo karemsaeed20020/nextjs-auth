@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 "use client";
 import { useState } from "react";
 import { FiLock } from "react-icons/fi";
@@ -6,24 +6,17 @@ import { motion } from "framer-motion";
 import { toast, Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import Input from "@/components/inputs/Input";
-import {
-  registerFailure,
-  registerStart,
-  registerSuccess,
-} from "@/redux/auth/authSlice";
+import { registerFailure, registerStart, registerSuccess } from "@/redux/auth/authSlice";
 import axiosInstance from "@/lib/axios";
 import { RootState } from "@/redux/store";
-import { z, ZodError } from "zod";
+import { ZodError } from "zod";
 import { useRouter } from "next/navigation";
-import {
-  FormSchemaChangePassword,
-  FormSchemaTypeChangePassword,
-} from "@/schema/validations";
+import { FormSchemaChangePassword, FormSchemaTypeChangePassword } from "@/schema/validations";
 
 export default function ChangePassword() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { loading, error, token } = useSelector((state: RootState) => state.auth);
+  const { loading, error, token, user } = useSelector((state: RootState) => state.auth);
 
   const [formData, setFormData] = useState<FormSchemaTypeChangePassword>({
     old_password: "",
@@ -41,7 +34,8 @@ export default function ChangePassword() {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       FormSchemaChangePassword.parse(formData);
       setErrors({});
@@ -66,7 +60,16 @@ export default function ChangePassword() {
         }
       );
 
-      dispatch(registerSuccess({ token, phone: null }));
+      dispatch(registerSuccess({ 
+        token: response.data.token || token, 
+        user: user || { 
+          id: 0, 
+          name: "User", 
+          phone: "",
+          image: undefined
+        } 
+      }));
+      
       toast.success("Password updated successfully!", { id: changePassToastId });
       setFormData({
         old_password: "",
@@ -74,36 +77,35 @@ export default function ChangePassword() {
         new_password_confirmation: "",
       });
       router.push("/login");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
+      
+    } catch (err: unknown) {
       if (err instanceof ZodError) {
         const newErrors: Partial<
           Record<keyof FormSchemaTypeChangePassword, string>
         > = {};
         err.issues.forEach((issue) => {
-          newErrors[issue.path[0] as keyof FormSchemaTypeChangePassword] =
-            issue.message;
+          const path = issue.path[0] as keyof FormSchemaTypeChangePassword;
+          newErrors[path] = issue.message;
         });
         setErrors(newErrors);
         toast.error(err.issues[0].message);
         dispatch(registerFailure("Validation failed."));
-      } else {
-        const message =
-          err?.response?.data?.message || err.message || "Something went wrong.";
+      } else if (err instanceof Error) {
+        const message = err.message || "Something went wrong.";
         dispatch(registerFailure(message));
         toast.error(message);
+      } else {
+        dispatch(registerFailure("An unknown error occurred"));
+        toast.error("An unknown error occurred");
       }
     }
   };
 
   return (
-    <main className="bg-gradient-to-br h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900  flex items-center justify-center px-4 py-10 text-white relative">
+    <main className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen flex items-center justify-center px-4 py-10 text-white relative">
       <Toaster position="top-center" />
       <motion.form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
+        onSubmit={onSubmit}
         className="w-full max-w-lg p-8 space-y-6 rounded-2xl shadow-xl bg-[#181A20] border border-[#2c2f36]"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -149,7 +151,9 @@ export default function ChangePassword() {
         />
 
         {error && (
-          <div className="text-center text-red-400 text-sm font-medium">{error}</div>
+          <div className="text-center text-red-400 text-sm font-medium">
+            {error}
+          </div>
         )}
 
         <motion.button
@@ -159,7 +163,7 @@ export default function ChangePassword() {
           whileHover={{ scale: 1.02 }}
           disabled={loading} 
         >
-          Change Password
+          {loading ? "Processing..." : "Change Password"}
         </motion.button>
       </motion.form>
     </main>
