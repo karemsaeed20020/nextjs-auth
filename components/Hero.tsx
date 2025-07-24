@@ -1,15 +1,26 @@
 "use client";
-
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default function Hero() {
+interface HeroProps {
+  isLoggedIn: boolean;
+}
+
+export default function Hero({ isLoggedIn }: HeroProps) {
   const router = useRouter();
 
   return (
     <section className="relative w-full min-h-screen flex items-center bg-white overflow-hidden">
+      {/* Background pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
       
+      {/* Welcome message for logged in users */}
+      {isLoggedIn && (
+        <div className="absolute top-6 right-6 z-20 bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium">
+          Welcome back!
+        </div>
+      )}
+
       <div className="relative z-10 container mx-auto px-6 py-20 lg:px-8 flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
         {/* Text Content */}
         <div className="lg:w-1/2 text-center lg:text-left">
@@ -58,6 +69,7 @@ export default function Hero() {
           </div>
         </div>
 
+        {/* Image Content */}
         <div className="lg:w-1/2 relative">
           <div className="relative aspect-square w-full h-auto rounded-2xl overflow-hidden shadow-xl">
             <Image
@@ -78,6 +90,7 @@ export default function Hero() {
         </div>
       </div>
 
+      {/* Decorative elements */}
       <div className="hidden lg:block absolute top-1/4 left-10 w-16 h-16 rounded-full bg-emerald-100 opacity-50"></div>
       <div className="hidden lg:block absolute bottom-1/3 right-20 w-24 h-24 rounded-full bg-blue-100 opacity-50"></div>
     </section>
