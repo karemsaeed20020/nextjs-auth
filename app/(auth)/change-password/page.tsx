@@ -13,10 +13,23 @@ import { ZodError } from "zod";
 import { useRouter } from "next/navigation";
 import { FormSchemaChangePassword, FormSchemaTypeChangePassword } from "@/schema/validations";
 
+interface User {
+  id: number;
+  name: string;
+  phone: string;
+  email?: string;
+  image?: string;
+}
+
 export default function ChangePassword() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { loading, error, token, user } = useSelector((state: RootState) => state.auth);
+  const { loading, error, token, user } = useSelector((state: RootState) => ({
+    loading: state.auth.loading,
+    error: state.auth.error,
+    token: state.auth.token,
+    user: state.auth.user as User | null
+  }));
 
   const [formData, setFormData] = useState<FormSchemaTypeChangePassword>({
     old_password: "",
@@ -60,14 +73,19 @@ export default function ChangePassword() {
         }
       );
 
+      if (!user) {
+        throw new Error("User data not available");
+      }
+
       dispatch(registerSuccess({ 
         token: response.data.token || token, 
-        user: user || { 
-          id: 0, 
-          name: "User", 
-          phone: "",
-          image: undefined
-        } 
+        user: {
+          id: user.id,
+          name: user.name,
+          phone: user.phone,
+          email: user.email,
+          image: user.image
+        }
       }));
       
       toast.success("Password updated successfully!", { id: changePassToastId });
