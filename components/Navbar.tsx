@@ -65,7 +65,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Add padding to the top of your page content to account for the fixed navbar */}
       <div className="pt-16"></div>
       
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b">
