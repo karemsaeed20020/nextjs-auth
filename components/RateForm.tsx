@@ -17,9 +17,7 @@ interface Props {
 
 const RateForm = ({ productId, isRated, setProduct }: Props) => {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth.user);
-  const token = useSelector((state: RootState) => state.auth.token);
-
+  const { user, token } = useSelector((state: RootState) => state.auth);
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,9 +49,9 @@ const RateForm = ({ productId, isRated, setProduct }: Props) => {
         value: rating,
         description: reviewText,
         created_at: new Date().toISOString(),
-        user_id: user?.id,
-        user_name: user?.name,
-        user_image: user?.image || '',
+        user_id: user?.id || 0, 
+        user_name: user?.name || 'Anonymous',
+        user_image: user?.image || 'https://backend.outletplus.sa/storage/106/profile_image-2025.01.306286.jpeg',
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,14 +70,13 @@ const RateForm = ({ productId, isRated, setProduct }: Props) => {
         rates: [newReview, ...prev.rates],
       }));
 
-      // Update Redux
       dispatch(addReview(newReview));
 
       toast.dismiss();
       toast.success('Thank you for your review!');
       setRating(0);
       setReviewText('');
-    } catch  {
+    } catch {
       toast.dismiss();
       toast.error('Failed to submit review');
     } finally {
@@ -87,11 +84,10 @@ const RateForm = ({ productId, isRated, setProduct }: Props) => {
     }
   };
 
-  // Don’t show form if rated
   if (isRated === 1) {
     return (
       <div className="text-center p-4 bg-gray-100 rounded-md shadow">
-        <p className="text-teal-700 font-semibold">You’ve already rated this product.</p>
+        <p className="text-teal-700 font-semibold">You have already rated this product.</p>
       </div>
     );
   }
