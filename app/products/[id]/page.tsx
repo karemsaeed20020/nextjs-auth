@@ -1,5 +1,5 @@
-'use client';
 
+'use client';
 import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
@@ -29,26 +29,24 @@ const ProductDetails = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axiosInstance.get(`api/products/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-        },
-      });
+      const headers = token ? {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+      } : { Accept: 'application/json' };
+
+      const res = await axiosInstance.get(`api/products/${id}`, { headers });
 
       const fetchedProduct = res.data.data;
       setProduct(fetchedProduct);
 
-      dispatch(
-  setProductData({
-    productId: fetchedProduct.id,
-    rate_avg: fetchedProduct.rate_avg,
-    rate_count: fetchedProduct.rate_count,
-    rates: fetchedProduct.rates,
-    rate_details: fetchedProduct.rate_details,
-    is_rated: fetchedProduct.is_rated,
-  })
-);
+      dispatch(setProductData({
+        productId: fetchedProduct.id,
+        rate_avg: fetchedProduct.rate_avg,
+        rate_count: fetchedProduct.rate_count,
+        rates: fetchedProduct.rates,
+        rate_details: fetchedProduct.rate_details,
+        is_rated: fetchedProduct.is_rated,
+      }));
     } catch {
       setError('Failed to load product details.');
     } finally {
@@ -80,18 +78,20 @@ const ProductDetails = () => {
           <ProductInfo product={product} />
         </div>
 
-        <ProductTabs
-          specifications={product.specifications || ''}
-          subCategoryId={product.sub_category_id}
-          currentId={product.id}
-          averageRating={parseFloat(product.rate_avg)}
-          ratingCount={product.rate_count}
-          rateDetails={product.rate_details}
-          reviews={product.rates} 
-          isRated={product.is_rated}
-          token={token}
-          setProduct={setProduct}
-        />
+        {token && (
+          <ProductTabs
+            specifications={product.specifications || ''}
+            subCategoryId={product.sub_category_id}
+            currentId={product.id}
+            averageRating={parseFloat(product.rate_avg)}
+            ratingCount={product.rate_count}
+            rateDetails={product.rate_details}
+            reviews={product.rates} 
+            isRated={product.is_rated}
+            token={token}
+            setProduct={setProduct}
+          />
+        )}
       </div>
     </div>
   );
