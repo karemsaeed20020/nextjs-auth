@@ -110,7 +110,7 @@ const ProductList = ({ filters }: ProductListProps) => {
       const formData = new FormData();
       formData.append("product_id", productId.toString());
       formData.append("quantity", "1");
-
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const response = await axiosInstance.post("api/add-to-cart", formData, {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       });
