@@ -198,14 +198,7 @@ export default function CartPage() {
               />
             ))}
 
-            <div className="flex justify-end pt-4">
-              <button
-                onClick={handleClearCart}
-                className="text-red-600 hover:text-red-800 flex items-center gap-2 transition cursor-pointer"
-              >
-                Clear Cart
-              </button>
-            </div>
+            
           </div>
 
           <CartSummary
