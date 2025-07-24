@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,11 +11,7 @@ import { FiLock, FiMail } from "react-icons/fi";
 import Link from "next/link";
 import { toast, Toaster } from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
-import {
-  registerStart,
-  registerSuccess,
-  registerFailure,
-} from "@/redux/auth/authSlice";
+import { registerStart, registerSuccess, registerFailure } from "@/redux/auth/authSlice";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
@@ -65,12 +62,21 @@ export default function RegisterPage() {
       if (response.status === 201 || response.status === 200) {
         setRegisteredPhone(data.phone);
         setIsOtpStep(true);
-        dispatch(registerSuccess({ token: "", phone: data.phone }));
+        // Updated to match the expected payload structure
+        dispatch(registerSuccess({ 
+          token: response.data.token || "", 
+          user: {
+            id: 0, // Temporary ID, will be updated after verification
+            name: data.username,
+            phone: data.phone,
+            email: data.email
+          }
+        }));
         toast.success("Registration successful! Please verify OTP.");
       } else {
         throw new Error("Registration failed.");
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const message =
         error?.response?.data?.message ||
@@ -187,7 +193,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-[#E7C9A5] text-black font-semibold rounded-lg hover:bg-[#d6b58f] transition duration-200"
+              className="cursor-pointer w-full py-3 bg-[#E7C9A5] text-black font-semibold rounded-lg hover:bg-[#d6b58f] transition duration-200"
             >
               {loading ? "Registering..." : "Register"}
             </button>
