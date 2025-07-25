@@ -10,6 +10,8 @@ import { logout } from "@/redux/auth/authSlice";
 import { setNotifications } from "@/redux/notifications/notificationsSlice";
 import { Heart, ShoppingCart, Bell } from "lucide-react";
 import axios from "axios";
+import { resetFavorites } from "@/redux/favorites/favoritesSlice";
+import { clearCart } from "@/redux/cart/cartSlice";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -60,6 +62,8 @@ export default function Navbar() {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(resetFavorites()); // Reset favorites on logout
+    dispatch(clearCart()); // Reset cart on logout
     router.push("/login");
   };
 
@@ -79,29 +83,35 @@ export default function Navbar() {
             <Link href="/favorites" className="relative">
               <Heart className="text-red-500" />
               {favorites.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{favorites.length}</span>
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {favorites.length}
+                </span>
               )}
             </Link>
 
             <Link href="/cart" className="relative">
               <ShoppingCart className="text-blue-500" />
               {cart.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{cart.length}</span>
+                <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cart.length}
+                </span>
               )}
             </Link>
 
             <Link href="/notifications" className="relative">
               <Bell className="text-yellow-500" />
               {unreadCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{unreadCount}</span>
+                <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadCount}
+                </span>
               )}
             </Link>
 
-            {isLoggedIn && (
+            {isLoggedIn ? (
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden"
+                  className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden cursor-pointer"
                 >
                   {user?.image ? (
                     <img src={user.image} alt="User" className="object-cover w-full h-full" />
@@ -141,10 +151,21 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
+            ) : (
+              <Link 
+                href="/login" 
+                className="block bg-teal-600 w-full text-center py-2 px-6 text-white hover:bg-teal-500 rounded-md transition-colors duration-200"
+              >
+                Login
+              </Link>
             )}
           </div>
 
-          <button onClick={() => setMenuOpen(!menuOpen)} className="sm:hidden">
+          <button 
+            onClick={() => setMenuOpen(!menuOpen)} 
+            className="sm:hidden focus:outline-none"
+            aria-label="Toggle menu"
+          >
             <svg width="24" height="20" viewBox="0 0 24 20" fill="none">
               <rect width="24" height="2" fill="#000000" />
               <rect y="9" width="24" height="2" fill="#000000" />
@@ -156,20 +177,30 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {menuOpen && (
           <div className="sm:hidden px-6 pb-4 space-y-2 bg-white shadow-md">
-            <Link href="/about" className="block text-black">About</Link>
-            <Link href="/contact" className="block text-black">Contact</Link>
-            <Link href="/products" className="block text-black">Products</Link>
-            <Link href="/favorites" className="block text-black">Favorites</Link>
-            <Link href="/cart" className="block text-black">Cart</Link>
-            <Link href="/notifications" className="block text-black">Notifications</Link>
+            <Link href="/about" className="block py-2 text-black hover:bg-gray-100 rounded px-2">About</Link>
+            <Link href="/contact" className="block py-2 text-black hover:bg-gray-100 rounded px-2">Contact</Link>
+            <Link href="/products" className="block py-2 text-black hover:bg-gray-100 rounded px-2">Products</Link>
+            <Link href="/favorites" className="block py-2 text-black hover:bg-gray-100 rounded px-2">Favorites</Link>
+            <Link href="/cart" className="block py-2 text-black hover:bg-gray-100 rounded px-2">Cart</Link>
+            <Link href="/notifications" className="block py-2 text-black hover:bg-gray-100 rounded px-2">Notifications</Link>
             {isLoggedIn ? (
               <>
-                <Link href="/change-password" className="block text-black">Change Password</Link>
-                <Link href="/change-phone" className="block text-black">Change Phone</Link>
-                <button onClick={handleLogout} className="block text-red-600">Logout</button>
+                <Link href="/change-password" className="block py-2 text-black hover:bg-gray-100 rounded px-2">Change Password</Link>
+                <Link href="/change-phone" className="block py-2 text-black hover:bg-gray-100 rounded px-2">Change Phone</Link>
+                <button 
+                  onClick={handleLogout} 
+                  className="block w-full text-left py-2 text-red-600 hover:bg-gray-100 rounded px-2"
+                >
+                  Logout
+                </button>
               </>
             ) : (
-              <Link href="/login" className="block text-indigo-600">Login</Link>
+              <Link 
+                href="/login" 
+                className="block w-full text-center py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200 mt-2"
+              >
+                Login
+              </Link>
             )}
           </div>
         )}
