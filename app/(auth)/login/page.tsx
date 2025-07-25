@@ -1,6 +1,6 @@
 
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast, { Toaster } from "react-hot-toast";
@@ -9,7 +9,7 @@ import Link from "next/link";
 import Input from "@/components/inputs/Input";
 import axiosInstance from "@/lib/axios";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import {  RootState } from "@/redux/store";
 import {
   loginStart,
   loginSuccess,
@@ -21,9 +21,19 @@ import { MdLock, MdPhone } from "react-icons/md";
 export default function LoginPage() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { loading, error, token } = useSelector(
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const { loading, error, token, user } = useSelector(
     (state: RootState) => state.auth
   );
+
+  useEffect(() => {
+    // Check if user is already logged in
+    if (token && user) {
+      router.push("/");
+    } else {
+      setIsCheckingAuth(false);
+    }
+  }, [token, user, router]);
 
   const {
     register,
@@ -42,12 +52,11 @@ export default function LoginPage() {
       const user = res.data.data;
 
       dispatch(loginSuccess({ token, user }));
-
       toast.success("Logged in successfully");
-
+    
       axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
       router.push("/");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const message = err?.response?.data?.message || "Login failed";
       dispatch(loginFailure(message));
@@ -60,6 +69,15 @@ export default function LoginPage() {
       axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
   }, [token]);
+
+  // Show loading while checking auth status
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div className="w-16 h-16 border-4 border-t-transparent border-[#E7C9A5] rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4 py-10">
@@ -106,7 +124,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-[#E7C9A5] text-black font-semibold rounded-lg hover:bg-[#d6b58f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#E7C9A5] transition duration-200"
+              className="cursor-pointer w-full py-3 bg-[#E7C9A5] text-black font-semibold rounded-lg hover:bg-[#d6b58f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#E7C9A5] transition duration-200"
             >
               {loading ? "Logging in..." : "Login"}
             </button>
@@ -117,7 +135,7 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-300">
-            Don’t have an account?{" "}
+            Do not have an account?{" "}
             <Link
               href="/sign-up"
               className="font-medium text-[#E7C9A5] hover:text-[#d6b58f] hover:underline transition"
