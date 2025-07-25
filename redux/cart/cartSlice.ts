@@ -1,6 +1,5 @@
 
-
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction  } from '@reduxjs/toolkit';
 
 interface CartItem {
   id: number;
@@ -33,6 +32,7 @@ const initialState: CartState = {
   error: null,
   vatRatio: '0'
 };
+
 
 const cartSlice = createSlice({
   name: 'cart',
