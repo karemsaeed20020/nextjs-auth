@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FiLock } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import Input from "@/components/inputs/Input";
 import { registerFailure, registerStart, registerSuccess } from "@/redux/auth/authSlice";
@@ -121,7 +121,6 @@ export default function ChangePassword() {
 
   return (
     <main className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen flex items-center justify-center px-4 py-10 text-white relative">
-      <Toaster position="top-center" />
       <motion.form
         onSubmit={onSubmit}
         className="w-full max-w-lg p-8 space-y-6 rounded-2xl shadow-xl bg-[#181A20] border border-[#2c2f36]"
@@ -176,7 +175,7 @@ export default function ChangePassword() {
 
         <motion.button
           type="submit"
-          className="w-full py-3 text-sm font-semibold text-black bg-[#E7C9A5] rounded-xl hover:bg-[#d8b58e] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 text-sm font-semibold text-black bg-[#E7C9A5] rounded-xl hover:bg-[#d8b58e] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           whileTap={{ scale: 0.95 }}
           whileHover={{ scale: 1.02 }}
           disabled={loading} 
