@@ -8,7 +8,7 @@ import Input from "@/components/inputs/Input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { setLoading, setForgotPasswordPhone } from "@/redux/auth/authSlice";
@@ -149,7 +149,6 @@ export default function ForgotPassword() {
 
   return (
     <div className="flex items-center justify-center px-4 py-10 w-full min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 animate-gradient-bg">
-      <Toaster position="top-right" />
       {loading && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="w-16 h-16 border-4 border-t-transparent border-[#E7C9A5] rounded-full animate-spin"></div>
@@ -191,7 +190,7 @@ export default function ForgotPassword() {
         </motion.div>
         <motion.button
           type="submit"
-          className="w-full py-3 px-6 rounded-lg bg-[#E7C9A5] transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg"
+          className="w-full py-3 px-6 rounded-lg bg-[#E7C9A5] transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg cursor-pointer"
           disabled={loading}
           variants={buttonVariants}
           whileTap="whileTap"
