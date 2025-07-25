@@ -8,6 +8,8 @@ const initialState: FavoritesState = {
   items: [],
 };
 
+
+
 const favoritesSlice = createSlice({
   name: 'favorites',
   initialState,
@@ -23,8 +25,11 @@ const favoritesSlice = createSlice({
     setFavorites: (state, action: PayloadAction<number[]>) => {
       state.items = action.payload;
     },
+    resetFavorites: (state) => {
+      state.items = [];
+    },
   },
 });
 
-export const { addFavorite, removeFavorite, setFavorites } = favoritesSlice.actions;
+export const { addFavorite, removeFavorite, setFavorites, resetFavorites } = favoritesSlice.actions;
 export default favoritesSlice.reducer;
