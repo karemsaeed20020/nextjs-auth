@@ -4,7 +4,7 @@ import { useState } from "react";
 import { BsTelephone } from "react-icons/bs";
 import { FiLock } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { z, ZodError } from "zod";
 import { RootState } from "@/redux/store";
@@ -104,7 +104,6 @@ export default function ChangePhone() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center px-4 py-10 text-white relative">
-      <Toaster position="top-right" />
 
       {loading && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
@@ -153,7 +152,7 @@ export default function ChangePhone() {
 
         <motion.button
           type="submit"
-          className="w-full py-3 text-sm font-semibold text-black bg-[#E7C9A5] rounded-xl hover:bg-[#d8b58e] transition-all duration-200"
+          className="w-full py-3 text-sm font-semibold text-black bg-[#E7C9A5] rounded-xl hover:bg-[#d8b58e] transition-all duration-200 cursor-pointer"
           whileTap={{ scale: 0.95 }}
           whileHover={{ scale: 1.02 }}
           disabled={loading}
