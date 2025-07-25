@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import axiosInstance from '@/lib/axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
@@ -66,7 +66,6 @@ const ResetPasswordPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4">
-      <Toaster position="top-right" />
       <div className="w-full max-w-md bg-white/10 backdrop-blur p-8 rounded-xl shadow-lg border border-gray-700">
         <h2 className="text-center text-3xl font-bold text-white mb-6">Reset Password</h2>
         <form onSubmit={handleReset} className="space-y-6">
@@ -92,7 +91,7 @@ const ResetPasswordPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-6 rounded-lg bg-[#E7C9A5] text-black font-semibold hover:bg-[#d8b58e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 px-6 rounded-lg bg-[#E7C9A5] text-black font-semibold hover:bg-[#d8b58e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {loading ? 'Resetting...' : 'Reset Password'}
           </button>
