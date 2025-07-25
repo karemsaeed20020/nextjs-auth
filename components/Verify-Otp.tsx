@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setPhoneAndCode } from "@/redux/auth/authSlice";
 
@@ -154,7 +154,6 @@ export default function OtpVerification({
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex-col items-center justify-center px-4 py-10">
-      <Toaster position="top-right" />
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white/10 backdrop-blur p-8 rounded-xl shadow-lg space-y-6 border border-gray-700"
@@ -193,7 +192,7 @@ export default function OtpVerification({
         <button
           type="submit"
           disabled={isVerifyButtonDisabled}
-          className={`w-full py-3 text-sm font-semibold text-black bg-[#E7C9A5] rounded-xl transition-all duration-200
+          className={`cursor-pointer w-full py-3 text-sm font-semibold text-black bg-[#E7C9A5] rounded-xl transition-all duration-200
             ${
               isVerifyButtonDisabled
                 ? "opacity-50 cursor-not-allowed"
